@@ -1,0 +1,52 @@
+﻿<Window x:Class="SelectedItemsListener.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:a="clr-namespace:SelectedItemsListener"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="MainWindow"
+        Width="525"
+        Height="350"
+        d:DataContext="{d:DesignInstance a:Vm}"
+        mc:Ignorable="d">
+    <Grid>
+        <StackPanel>
+            <GroupBox Header="Source">
+                <ListBox ItemsSource="{Binding Values}"
+                         SelectionMode="Extended"
+                         a:SelectorExt.SelectedItemsBindable="{Binding SelectedItems}" />
+            </GroupBox>
+            
+            <GroupBox Header="Selected">
+                <ListBox ItemsSource="{Binding SelectedItems}" />
+            </GroupBox>
+            
+            <GroupBox Header="DatagridSource">
+                <DataGrid ItemsSource="{Binding ClassValues}"
+                         SelectionMode="Extended"
+                         a:SelectorExt.SelectedItemsBindable="{Binding SelectedClasses}" />
+            </GroupBox>
+
+            <GroupBox Header="SelectedClasses">
+                <ListBox ItemsSource="{Binding SelectedClasses}" />
+            </GroupBox>
+
+            <GroupBox Header="Vanilla">
+                <ListBox ItemsSource="{Binding Values}" SelectionMode="Extended" />
+            </GroupBox>
+
+            <GroupBox Header="SelectedItem">
+                <TextBlock Text="{Binding SelectedItem}" />
+            </GroupBox>
+            
+            <GroupBox Header="SelectionBoxItem">
+                <TextBlock Text="{Binding ElementName=ComboBox, Path=SelectionBoxItem}" />
+            </GroupBox>
+
+            <ComboBox x:Name="ComboBox"
+                      ItemsSource="{Binding Values}"
+                      SelectedItem="{Binding SelectedItem}">
+            </ComboBox>
+        </StackPanel>
+    </Grid>
+</Window>
