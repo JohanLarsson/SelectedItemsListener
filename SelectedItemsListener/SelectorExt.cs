@@ -2,10 +2,13 @@ namespace SelectedItemsListener
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Collections.Specialized;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
+    using System.Windows.Documents;
 
     public static class SelectorExt
     {
@@ -14,7 +17,7 @@ namespace SelectedItemsListener
             typeof(IList),
             typeof(SelectorExt),
             new PropertyMetadata(default(IList), OnSelectedItemsChanged));
-
+        private static readonly List<Listener> Listeners = new List<Listener>();
         public static void SetSelectedItemsBindable(Selector element, IList value)
         {
             element.SetValue(SelectedItemsBindableProperty, value);
@@ -45,56 +48,71 @@ namespace SelectedItemsListener
             {
                 throw new ArgumentException("Did not find property SelectedItems on " + o.GetType().Name, "o");
             }
+
             if (e.OldValue != null)
             {
-                CollectionChangedEventManager.RemoveHandler(source, (sender, args) => Update((IList)sender, args, (IList)e.OldValue));
+                Listener listener = Listeners.SingleOrDefault(l => l.TargetReference.Target == e.OldValue);
+                if (listener != null)
+                {
+                    CollectionChangedEventManager.RemoveListener(source, listener);
+                }
                 ((IList)e.OldValue).Clear();
             }
             if (e.NewValue != null)
             {
-                CollectionChangedEventManager.AddHandler(source, (sender, args) => Update((IList)sender, args, (IList)e.NewValue));
-                Update((IList)source, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset), (IList)e.NewValue);
+                var listener = new Listener((IList)e.NewValue);
+                Listeners.Add(listener);
+                CollectionChangedEventManager.AddListener(source, listener);
+                listener.ReceiveWeakEvent(typeof(CollectionChangedEventManager), source, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
         }
 
-        private static void Update(IList source, NotifyCollectionChangedEventArgs args, IList target)
+        internal class Listener : IWeakEventListener
         {
-            target.Clear();
-            foreach (var item in source)
+            internal readonly WeakReference TargetReference;
+            public Listener(IList newValue)
             {
-                target.Add(item);
+                TargetReference = new WeakReference(newValue);
             }
-            //switch (args.Action)
-            //{
-            //    case NotifyCollectionChangedAction.Add:
-            //        for (int i = 0; i < args.NewItems.Count; i++)
-            //        {
-            //            var item = args.NewItems[i];
-            //            target.Insert(args.NewStartingIndex + i, item);
-            //        }
-            //        break;
-            //    case NotifyCollectionChangedAction.Remove:
-            //        for (int i = 0; i < args.OldItems.Count; i++)
-            //        {
-            //            target.RemoveAt(args.OldStartingIndex + i);
-            //        }
-            //        break;
-            //    case NotifyCollectionChangedAction.Replace:
-            //        throw new NotImplementedException("Not sure replace can happen");
-            //        break;
-            //    case NotifyCollectionChangedAction.Move:
-            //        throw new NotImplementedException("Not sure move can happen");
-            //        break;
-            //    case NotifyCollectionChangedAction.Reset:
-            //        target.Clear();
-            //        foreach (var item in source)
-            //        {
-            //            target.Add(item);
-            //        }
-            //        break;
-            //    default:
-            //        throw new ArgumentOutOfRangeException();
-            //}
+
+            public bool ReceiveWeakEvent(Type managerType, object sender, EventArgs e)
+            {
+                var args = (NotifyCollectionChangedEventArgs)e;
+                var target = (IList)TargetReference.Target;
+                var source = (IList)sender;
+                switch (args.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        for (int i = 0; i < args.NewItems.Count; i++)
+                        {
+                            var item = args.NewItems[i];
+                            target.Insert(args.NewStartingIndex + i, item);
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        for (int i = 0; i < args.OldItems.Count; i++)
+                        {
+                            target.RemoveAt(args.OldStartingIndex + i);
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Replace:
+                        throw new NotImplementedException("Not sure replace can happen");
+                        break;
+                    case NotifyCollectionChangedAction.Move:
+                        throw new NotImplementedException("Not sure move can happen");
+                        break;
+                    case NotifyCollectionChangedAction.Reset:
+                        target.Clear();
+                        foreach (var item in source)
+                        {
+                            target.Add(item);
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                return true;
+            }
         }
     }
 }
