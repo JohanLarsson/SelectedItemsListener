@@ -29,7 +29,7 @@
         {
             get
             {
-                return new[] { 1, 2, 3, 4, 5 };
+                return Enumerable.Range(1, 500);
             }
         }
 

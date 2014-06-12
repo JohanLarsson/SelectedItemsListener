@@ -10,56 +10,64 @@
         d:DataContext="{d:DesignInstance a:Vm}"
         mc:Ignorable="d">
     <Grid>
-        <StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
             <GroupBox Header="Source">
                 <ListBox x:Name="ListBox"
                          IsSynchronizedWithCurrentItem="True"
                          ItemsSource="{Binding Values}"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
                          SelectionMode="Extended"
                          a:SelectorExt.SelectedItemsBindable="{Binding SelectedItems}" />
             </GroupBox>
-            <StackPanel Orientation="Horizontal">
-                <GroupBox Header="Listener">
-                    <ListBox ItemsSource="{Binding SelectedItems}" />
-                </GroupBox>
-                <GroupBox Header="Binding">
-                    <ListBox ItemsSource="{Binding ElementName=ListBox, Path=SelectedItems}" />
-                </GroupBox>
-            </StackPanel>
+            <StackPanel Grid.Row="1">
+                <StackPanel Orientation="Horizontal">
+                    <GroupBox Header="Listener">
+                        <ListBox ItemsSource="{Binding SelectedItems}" />
+                    </GroupBox>
+                    <GroupBox Header="Binding">
+                        <ListBox ItemsSource="{Binding ElementName=ListBox, Path=SelectedItems}" />
+                    </GroupBox>
+                </StackPanel>
 
 
-            <GroupBox Header="DatagridSource">
-                <DataGrid x:Name="DataGrid"
+                <GroupBox Header="DatagridSource">
+                    <DataGrid x:Name="DataGrid"
                           IsSynchronizedWithCurrentItem="True"
                           ItemsSource="{Binding ClassValues}"
                           SelectionMode="Extended"
                           a:SelectorExt.SelectedItemsBindable="{Binding SelectedClasses}" />
-            </GroupBox>
-
-            <StackPanel Orientation="Horizontal">
-                <GroupBox Header="Listener">
-                    <ListBox ItemsSource="{Binding SelectedClasses}" />
                 </GroupBox>
-                <GroupBox Header="Binding">
-                    <ListBox ItemsSource="{Binding ElementName=DataGrid, Path=SelectedItems}" />
+
+                <StackPanel Orientation="Horizontal">
+                    <GroupBox Header="Listener">
+                        <ListBox ItemsSource="{Binding SelectedClasses}" />
+                    </GroupBox>
+                    <GroupBox Header="Binding">
+                        <ListBox ItemsSource="{Binding ElementName=DataGrid, Path=SelectedItems}" />
+                    </GroupBox>
+                </StackPanel>
+
+                <GroupBox Header="Vanilla">
+                    <ListBox ItemsSource="{Binding Values}" SelectionMode="Extended" Height="100" />
                 </GroupBox>
-            </StackPanel>
 
-            <GroupBox Header="Vanilla">
-                <ListBox ItemsSource="{Binding Values}" SelectionMode="Extended" />
-            </GroupBox>
+                <GroupBox Header="SelectedItem">
+                    <TextBlock Text="{Binding SelectedItem}" />
+                </GroupBox>
 
-            <GroupBox Header="SelectedItem">
-                <TextBlock Text="{Binding SelectedItem}" />
-            </GroupBox>
+                <GroupBox Header="SelectionBoxItem">
+                    <TextBlock Text="{Binding ElementName=ComboBox, Path=SelectionBoxItem}" />
+                </GroupBox>
 
-            <GroupBox Header="SelectionBoxItem">
-                <TextBlock Text="{Binding ElementName=ComboBox, Path=SelectionBoxItem}" />
-            </GroupBox>
-
-            <ComboBox x:Name="ComboBox"
+                <ComboBox x:Name="ComboBox"
                       ItemsSource="{Binding Values}"
                       SelectedItem="{Binding SelectedItem}" />
-        </StackPanel>
+            </StackPanel>
+
+        </Grid>
     </Grid>
 </Window>
