@@ -48,6 +48,7 @@ namespace SelectedItemsListener
             if (e.OldValue != null)
             {
                 CollectionChangedEventManager.RemoveHandler(source, (sender, args) => Update((IList)sender, args, (IList)e.OldValue));
+                ((IList)e.OldValue).Clear();
             }
             if (e.NewValue != null)
             {
@@ -58,37 +59,42 @@ namespace SelectedItemsListener
 
         private static void Update(IList source, NotifyCollectionChangedEventArgs args, IList target)
         {
-            switch (args.Action)
+            target.Clear();
+            foreach (var item in source)
             {
-                case NotifyCollectionChangedAction.Add:
-                    for (int i = 0; i < args.NewItems.Count; i++)
-                    {
-                        var item = args.NewItems[i];
-                        target.Insert(args.NewStartingIndex + i, item);
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    for (int i = 0; i < args.OldItems.Count; i++)
-                    {
-                        target.RemoveAt(args.OldStartingIndex + i);
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    throw new NotImplementedException("Not sure replace can happen");
-                    break;
-                case NotifyCollectionChangedAction.Move:
-                    throw new NotImplementedException("Not sure move can happen");
-                    break;
-                case NotifyCollectionChangedAction.Reset:
-                    target.Clear();
-                    foreach (var item in source)
-                    {
-                        target.Add(item);
-                    }
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                target.Add(item);
             }
+            //switch (args.Action)
+            //{
+            //    case NotifyCollectionChangedAction.Add:
+            //        for (int i = 0; i < args.NewItems.Count; i++)
+            //        {
+            //            var item = args.NewItems[i];
+            //            target.Insert(args.NewStartingIndex + i, item);
+            //        }
+            //        break;
+            //    case NotifyCollectionChangedAction.Remove:
+            //        for (int i = 0; i < args.OldItems.Count; i++)
+            //        {
+            //            target.RemoveAt(args.OldStartingIndex + i);
+            //        }
+            //        break;
+            //    case NotifyCollectionChangedAction.Replace:
+            //        throw new NotImplementedException("Not sure replace can happen");
+            //        break;
+            //    case NotifyCollectionChangedAction.Move:
+            //        throw new NotImplementedException("Not sure move can happen");
+            //        break;
+            //    case NotifyCollectionChangedAction.Reset:
+            //        target.Clear();
+            //        foreach (var item in source)
+            //        {
+            //            target.Add(item);
+            //        }
+            //        break;
+            //    default:
+            //        throw new ArgumentOutOfRangeException();
+            //}
         }
     }
 }

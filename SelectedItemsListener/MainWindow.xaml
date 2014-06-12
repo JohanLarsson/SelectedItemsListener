@@ -12,24 +12,38 @@
     <Grid>
         <StackPanel>
             <GroupBox Header="Source">
-                <ListBox ItemsSource="{Binding Values}"
+                <ListBox x:Name="ListBox"
+                         IsSynchronizedWithCurrentItem="True"
+                         ItemsSource="{Binding Values}"
                          SelectionMode="Extended"
                          a:SelectorExt.SelectedItemsBindable="{Binding SelectedItems}" />
             </GroupBox>
-            
-            <GroupBox Header="Selected">
-                <ListBox ItemsSource="{Binding SelectedItems}" />
-            </GroupBox>
-            
+            <StackPanel Orientation="Horizontal">
+                <GroupBox Header="Listener">
+                    <ListBox ItemsSource="{Binding SelectedItems}" />
+                </GroupBox>
+                <GroupBox Header="Binding">
+                    <ListBox ItemsSource="{Binding ElementName=ListBox, Path=SelectedItems}" />
+                </GroupBox>
+            </StackPanel>
+
+
             <GroupBox Header="DatagridSource">
-                <DataGrid ItemsSource="{Binding ClassValues}"
-                         SelectionMode="Extended"
-                         a:SelectorExt.SelectedItemsBindable="{Binding SelectedClasses}" />
+                <DataGrid x:Name="DataGrid"
+                          IsSynchronizedWithCurrentItem="True"
+                          ItemsSource="{Binding ClassValues}"
+                          SelectionMode="Extended"
+                          a:SelectorExt.SelectedItemsBindable="{Binding SelectedClasses}" />
             </GroupBox>
 
-            <GroupBox Header="SelectedClasses">
-                <ListBox ItemsSource="{Binding SelectedClasses}" />
-            </GroupBox>
+            <StackPanel Orientation="Horizontal">
+                <GroupBox Header="Listener">
+                    <ListBox ItemsSource="{Binding SelectedClasses}" />
+                </GroupBox>
+                <GroupBox Header="Binding">
+                    <ListBox ItemsSource="{Binding ElementName=DataGrid, Path=SelectedItems}" />
+                </GroupBox>
+            </StackPanel>
 
             <GroupBox Header="Vanilla">
                 <ListBox ItemsSource="{Binding Values}" SelectionMode="Extended" />
@@ -38,15 +52,14 @@
             <GroupBox Header="SelectedItem">
                 <TextBlock Text="{Binding SelectedItem}" />
             </GroupBox>
-            
+
             <GroupBox Header="SelectionBoxItem">
                 <TextBlock Text="{Binding ElementName=ComboBox, Path=SelectionBoxItem}" />
             </GroupBox>
 
             <ComboBox x:Name="ComboBox"
                       ItemsSource="{Binding Values}"
-                      SelectedItem="{Binding SelectedItem}">
-            </ComboBox>
+                      SelectedItem="{Binding SelectedItem}" />
         </StackPanel>
     </Grid>
 </Window>

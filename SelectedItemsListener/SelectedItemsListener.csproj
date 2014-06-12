@@ -53,7 +53,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MultiSelectorBehaviours.cs" />
+    <Compile Include="TwoListSynchronizer.cs" />
     <Compile Include="DummyClass.cs" />
+    <Compile Include="IListItemConverter.cs" />
     <Compile Include="SelectorExt.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Vm.cs" />
